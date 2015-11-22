@@ -51,9 +51,28 @@ public class ImageDB {
 		}).collect(Collectors.toList());
 	}
 
-	public Result[] getBestMatchingByColor(int[] avgColor, boolean allowUsed, int count) {
+	public Result[] getBestMatchingByColor(int avgColor, boolean allowUsed, int count) {
 		
 		entries.sort(ColorComparators.vectorBased(avgColor));
+		return packResult(allowUsed, count);
+	}
+
+
+	
+	public Result[] getBestMatchingByColor(int[] colors, boolean allowUsed, int count) {
+		entries.sort(ColorComparators.subsampled(colors));
+		return packResult(allowUsed, count);
+	}
+
+
+	public Result[] getBestMatchingByBrightness(int brightness, boolean allowUsed, int count) {
+	
+		entries.sort(ColorComparators.brigthnessComparator(brightness));
+		return packResult(allowUsed, count);
+	}
+	
+	
+	private Result[] packResult(boolean allowUsed, int count) {
 		if (allowUsed) {
 			Result[] retval = new Result[count];
 			for (int i=0; i < retval.length; ++i) {
@@ -70,27 +89,8 @@ public class ImageDB {
 				return results.toArray(new Result[count]);
 		}
 		return null;
-	
 	}
 	
-	public Result[] getBestMatchingByBrightness(int brightness, boolean allowUsed, int count) {
-	
-		entries.sort(ColorComparators.brigthnessComparator(brightness));
-
-		if (allowUsed) {
-			return entries.subList(0, count).toArray(new Result[count]);
-		}
-	
-		List<Result> results = new ArrayList<>(count);
-		for (ImageDBEntry e : entries) {
-			if (!e._isUsed)
-				results.add(e._result);
-			if (results.size() == count)
-				return results.toArray(new Result[count]);
-		}
-		return null;
-	}
-
 
 	public List<ImageDBEntry> getEntries() {
 		return entries;
