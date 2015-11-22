@@ -54,14 +54,14 @@ public class MasterImage {
 		return sum;
 	}
 	
-	public int[] getAvgColor(int tileX, int tileY) {
+	public int getAvgColor(int tileX, int tileY) {
 		int q = _tileWidth * _tileHeight;
 		int[] result = new int[3];
 		int[] sum = getSumAt(tileX, tileY);
 		result[0] = (int) sum[0] / q;
 		result[1] = (int) sum[1] / q;
 		result[2] = (int) sum[2] / q;
-		return result;
+		return ImageAnalyzer.toInt(result);
 	}
 	
 	public int getAvgBrightness(int tileX, int tileY) {

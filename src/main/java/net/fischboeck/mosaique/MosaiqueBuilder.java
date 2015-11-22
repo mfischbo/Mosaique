@@ -28,6 +28,7 @@ public class MosaiqueBuilder {
 	private BufferedImage 		_im;
 	private boolean				_reuse;
 	private boolean				_formatFilter;
+	private boolean				_subSampling;
 	private Mode				_mode;
 	
 	private int					_width;
@@ -42,7 +43,9 @@ public class MosaiqueBuilder {
 	
 	private Map<String, BufferedImage> _cache = new HashMap<>();
 	
-	public MosaiqueBuilder(ImageDB db, MasterImage image, boolean allowReuse, boolean useFormatFilter, Mode mode, int strayFactor, int width, int height) {
+	public MosaiqueBuilder(ImageDB db, MasterImage image, 
+			boolean allowReuse, boolean useFormatFilter, Mode mode, int strayFactor, boolean useSubSampling, 
+			int width, int height) {
 		this._db = db;
 		this._master = image;
 		this._reuse  = allowReuse;
@@ -51,6 +54,7 @@ public class MosaiqueBuilder {
 		this._mode   = mode;
 		this._formatFilter = useFormatFilter;
 		this._stray = strayFactor;
+		this._subSampling = useSubSampling;
 		this._random = new Random();
 
 		if (_mode == Mode.COLOR) 
@@ -87,12 +91,15 @@ public class MosaiqueBuilder {
 			for (int ty = 0; ty < tc; ty++) {
 				
 				// avg color for that tile
-				int[] avgc = _master.getAvgColor(tx, ty);
+				int avgc = _master.getAvgColor(tx, ty);
 			
 				Result[] r = null;
-				if (_mode == Mode.COLOR)
-					r = _db.getBestMatchingByColor(avgc, _reuse, _stray);
-				else
+				if (_mode == Mode.COLOR) {
+					if (_subSampling)
+						r = _db.getBestMatchingByColor(findKernel(tx,ty), _reuse, _stray);
+					else
+						r = _db.getBestMatchingByColor(avgc, _reuse, _stray);
+				} else
 					r = _db.getBestMatchingByBrightness(_master.getAvgBrightness(tx, ty), _reuse, _stray);
 		
 				if (r == null) return;
@@ -108,6 +115,26 @@ public class MosaiqueBuilder {
 				}
 			}
 		}
+		
+		System.out.println("Used " + _cache.keySet().size() + " different images for this artwork");
+	}
+	
+	private int[] findKernel(int tx, int ty) {
+		
+		int[] r = new int[8];
+
+		r[0] = _master.getAvgColor(Math.max(tx-1, 0), 						Math.max(ty-1, 0));
+		r[1] = _master.getAvgColor(tx, 										Math.max(ty-1, 0));
+		r[2] = _master.getAvgColor(Math.min(tx+1, _master.getTileCount()-1),Math.max(ty-1, 0));
+		
+		r[3] = _master.getAvgColor(Math.max(tx-1,  0), ty);
+		r[4] = _master.getAvgColor(Math.min(tx+1, _master.getTileCount()-1),ty);
+		
+		r[5] = _master.getAvgColor(Math.max(tx-1, 0), 						Math.min(ty+1, _master.getTileCount() -1));
+		r[6] = _master.getAvgColor(tx, 										Math.min(ty+1, _master.getTileCount() -1));
+		r[7] = _master.getAvgColor(Math.min(tx+1, _master.getTileCount()-1),Math.min(ty+1, _master.getTileCount() -1));
+		
+		return r;
 	}
 	
 	
