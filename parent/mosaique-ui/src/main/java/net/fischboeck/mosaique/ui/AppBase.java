@@ -17,6 +17,10 @@ public class AppBase {
 		this._scene = scene;
 	}
 	
+	public Scene getScene() {
+		return this._scene;
+	}
+	
 	public void showMainView() {
 		_scene.setRoot(_view.getView());
 	}

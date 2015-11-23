@@ -28,9 +28,5 @@
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
   </content>
 </ScrollPane>
-</children></AnchorPane><ToolBar nodeOrientation="RIGHT_TO_LEFT" prefWidth="200.0">
-  <items>
-    <Button mnemonicParsing="false" text="+" /><Button mnemonicParsing="false" text="-" />
-  </items>
-</ToolBar>
+</children></AnchorPane>
 </children></VBox>
