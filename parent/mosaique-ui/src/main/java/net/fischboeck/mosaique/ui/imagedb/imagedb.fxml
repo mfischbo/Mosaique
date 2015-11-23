@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.fischboeck.mosaique.ui.imagedb.ImagedbPresenter">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="280.0" prefHeight="400.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.fischboeck.mosaique.ui.imagedb.ImagedbPresenter">
 <children><Label text="New Image Collection">
 <font>
 <Font name="Liberation Sans" size="24.0" />
@@ -20,7 +20,7 @@
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
-<children><Label text="Name" /><TextField GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+<children><Label text="Name" /><TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
 </children>
 </GridPane>
 </children>
@@ -38,20 +38,16 @@
 <VBox.margin>
 <Insets top="8.0" />
 </VBox.margin></HBox>
-<ScrollPane fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="200.0" prefViewportWidth="600.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+<ScrollPane fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="80.0" prefViewportHeight="200.0" prefViewportWidth="600.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
 <VBox.margin>
 <Insets top="8.0" />
 </VBox.margin>
-<contextMenu><ContextMenu>
-  <items>
-    <MenuItem mnemonicParsing="false" text="Foo" />
-  </items>
-</ContextMenu>
-</contextMenu></ScrollPane><HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0">
-<children><Button mnemonicParsing="false" text="Cancel">
+<content><FlowPane fx:id="flowPane" prefHeight="200.0" prefWidth="200.0" />
+</content></ScrollPane><HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0">
+<children><Button mnemonicParsing="false" onAction="#onCancelClicked" text="Cancel">
 <HBox.margin>
 <Insets right="8.0" />
-</HBox.margin></Button><Button mnemonicParsing="false" text="Save" />
+</HBox.margin></Button><Button mnemonicParsing="false" onAction="#onSaveClicked" text="Save" />
 </children>
 <VBox.margin>
 <Insets top="8.0" />

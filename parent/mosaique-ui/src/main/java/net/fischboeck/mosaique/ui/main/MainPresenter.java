@@ -4,12 +4,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
 import net.fischboeck.mosaique.ui.imagedb.ImagedbView;
 
 @Component
@@ -18,13 +20,16 @@ public class MainPresenter implements Initializable {
 	@Autowired
 	private ImagedbView				imdbView;
 
-	@Autowired
-	private MainView				mainView;
-	
 	@FXML private AnchorPane		masterPane;
 	
 	public void onFileNewClicked() {
 		System.out.println("u clicked something");
+	}
+	
+	@EventListener
+	public void handleViewDisposedEvent(ViewDisposedEvent event) {
+		if (this.masterPane.getChildren().contains(imdbView.getView()))
+			this.masterPane.getChildren().clear();
 	}
 
 	@Override
