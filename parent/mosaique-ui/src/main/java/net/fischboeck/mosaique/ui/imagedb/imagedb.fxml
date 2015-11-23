@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.fischboeck.mosaique.ui.imagedb.ImagedbPresenter">
+<children><Label text="New Image DB">
+<font>
+<Font size="24.0" />
+</font></Label>
+<AnchorPane maxWidth="1.7976931348623157E308">
+<children><GridPane maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" maxWidth="280.0" minWidth="10.0" prefWidth="134.0" />
+    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="442.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+<children><Label text="Name" /><TextField GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+</children>
+</GridPane>
+</children>
+</AnchorPane>
+<ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="200.0" prefViewportWidth="600.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+<VBox.margin>
+<Insets top="12.0" />
+</VBox.margin></ScrollPane><HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0">
+<children><Button mnemonicParsing="false" onAction="#onButtonAddClicked" text="Add..." />
+</children></HBox>
+</children>
+<padding>
+<Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+</padding></VBox>
