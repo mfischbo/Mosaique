@@ -2,6 +2,7 @@ package net.fischboeck.mosaique.ui.imagedb;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import net.fischboeck.mosaique.ui.AppBase;
 
 @Component
@@ -25,13 +27,18 @@ public class ImagedbPresenter implements Initializable {
 	
 	@FXML private ScrollPane contentPane;
 	
-
-	final DirectoryChooser ch2 = new DirectoryChooser();
+	final FileChooser      fCh = new FileChooser();
+	final DirectoryChooser dCh = new DirectoryChooser();
 	
-	public void onButtonAddClicked() {
-		File f = ch2.showDialog(_base.getScene().getWindow());
+	public void onAddDirectoryClicked() {
+		File f = dCh.showDialog(_base.getScene().getWindow());
 		System.out.println("Choosen directory " + f.getAbsolutePath());
 	}
+	
+	public void onAddFileClicked() {
+		List<File> files = fCh.showOpenMultipleDialog(_base.getScene().getWindow());
+	}
+	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
