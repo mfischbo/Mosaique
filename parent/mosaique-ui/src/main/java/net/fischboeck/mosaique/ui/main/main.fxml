@@ -8,7 +8,7 @@
 <children><MenuBar>
   <menus>
     <Menu mnemonicParsing="false" text="File">
-      <items><MenuItem mnemonicParsing="false" onAction="#onFileNewClicked" text="New Mosaique ..." /><MenuItem mnemonicParsing="false" onAction="#onImageDBNewClicked" text="New ImageDB..." /><MenuItem mnemonicParsing="false" text="Export as..." /><MenuItem mnemonicParsing="false" text="Settings" />
+      <items><MenuItem mnemonicParsing="false" onAction="#onMosaiqueNewClicked" text="New Mosaique ..." /><MenuItem mnemonicParsing="false" onAction="#onImageDBNewClicked" text="New ImageDB..." /><MenuItem mnemonicParsing="false" text="Export as..." /><MenuItem mnemonicParsing="false" text="Settings" />
         <MenuItem mnemonicParsing="false" text="Close" />
       </items>
     </Menu>

@@ -19,6 +19,9 @@ public class MainPresenter implements Initializable {
 
 	@Autowired
 	private ImagedbView				imdbView;
+	
+	@Autowired
+	private WizardView				wizView;
 
 	@FXML private AnchorPane		masterPane;
 	
@@ -28,7 +31,6 @@ public class MainPresenter implements Initializable {
 	
 	@EventListener
 	public void handleViewDisposedEvent(ViewDisposedEvent event) {
-		if (this.masterPane.getChildren().contains(imdbView.getView()))
 			this.masterPane.getChildren().clear();
 	}
 
@@ -36,6 +38,12 @@ public class MainPresenter implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void onMosaiqueNewClicked() {
+		Node n = wizView.getView();
+		this.masterPane.getChildren().clear();
+		this.masterPane.getChildren().add(n);
 	}
 	
 	public void onImageDBNewClicked() {

@@ -16,12 +16,18 @@ public class AppBase {
 	private Scene			_scene;
 	
 	public static List<String> fileTypes = new LinkedList<>();
+	public static List<String> extensions= new LinkedList<>();
 	
 	static {
 		fileTypes.add("jpg");
 		fileTypes.add("jpeg");
 		fileTypes.add("png");
 		fileTypes.add("tiff");
+		
+		extensions.add("*.jpg");
+		extensions.add("*.jpeg");
+		extensions.add("*.png");
+		extensions.add("*.tiff");
 	}
 	
 	public void setScene(Scene scene) {
