@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,31 +34,31 @@ import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
 public class ImagedbPresenter implements Initializable {
 
 	@Autowired
-	private AppBase							_base;
+	private AppBase					_base;
 	
 	@Autowired
-	private ApplicationEventPublisher		_publisher;
+	private ApplicationEventPublisher	_publisher;
 	
-	@FXML private TextField		nameField;
-	@FXML private ScrollPane 	contentPane;
-	@FXML private FlowPane   	flowPane;
+	@FXML private TextField			nameField;
+	@FXML private ScrollPane 		contentPane;
+	@FXML private FlowPane   		flowPane;
+
+	private List<File>				_directories = new LinkedList<>();
+	private List<File>				_files = new LinkedList<>();
 	
-	private List<File>			_directories = new LinkedList<>();
-	private List<File>			_files = new LinkedList<>();
 	
-	
-	final FileChooser      fCh = new FileChooser();
-	final DirectoryChooser dCh = new DirectoryChooser();
+	private final FileChooser      	_fCh = new FileChooser();
+	private final DirectoryChooser  _dCh = new DirectoryChooser();
 	
 	public void onAddDirectoryClicked() {
-		File f = dCh.showDialog(_base.getScene().getWindow());
+		File f = _dCh.showDialog(_base.getScene().getWindow());
 		if (f != null && f.isDirectory()) {
 			addDirectory(f);
 		}
 	}
 	
 	public void onAddFileClicked() {
-		List<File> files = fCh.showOpenMultipleDialog(_base.getScene().getWindow());
+		List<File> files = _fCh.showOpenMultipleDialog(_base.getScene().getWindow());
 		for (File f : files)
 			addFile(f);
 	}
@@ -72,6 +74,41 @@ public class ImagedbPresenter implements Initializable {
 	
 	public void onSaveClicked() {
 		
+		ProgressDialog pd = new ProgressDialog("Importing stuff...");
+		
+		Task<Integer> task = new Task<Integer>() {
+		
+			@Override
+			protected Integer call() throws Exception {
+				for (int i=0; i < 100; i++) {
+					updateProgress(i, 100);
+					try {
+						Thread.sleep(100L);
+					} catch (Exception ex) {
+						if (isCancelled()) {
+							break;
+						}
+					}
+				}
+				return 0;
+			}
+		};
+		
+		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				pd.close();
+				System.out.println("Finished work");
+				onCancelClicked();
+			}
+		});
+		
+		pd.show();
+		pd.getProgressBar().progressProperty().bind(task.progressProperty());
+		Thread th = new Thread(task);
+		//th.setDaemon(true);
+		th.start();
 	}
 
 	
@@ -92,7 +129,7 @@ public class ImagedbPresenter implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+	
 		flowPane.setPrefWidth(contentPane.getWidth());
 		flowPane.setPrefHeight(contentPane.getHeight());
 		flowPane.setPrefWrapLength(contentPane.getWidth());
@@ -124,7 +161,6 @@ public class ImagedbPresenter implements Initializable {
 							addFile(f);
 					}
 				}
-				
 				event.setDropCompleted(true);
 				event.consume();
 			}
