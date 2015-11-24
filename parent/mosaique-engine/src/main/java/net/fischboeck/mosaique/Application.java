@@ -1,15 +1,10 @@
 package net.fischboeck.mosaique;
 
-import java.io.File;
-
-import net.fischboeck.mosaique.MosaiqueBuilder.Mode;
-import net.fischboeck.mosaique.db.ImageDB;
-import net.fischboeck.mosaique.db.ImageDBBuilder;
-
 public class Application {
 
 	public static void main(String[] args) {
-		ImageDBBuilder dbb = new ImageDBBuilder(new File("/home/foobox/Pictures/KORSIKA09"), true);
+		/*
+		ResultSetBuilder dbb = new ResultSetBuilder(new File("/home/foobox/Pictures/KORSIKA09"), true);
 		ImageDB db = dbb.build();
 		
 		try {
@@ -30,5 +25,6 @@ public class Application {
 			System.err.println(ex.getMessage());
 			ex.printStackTrace();
 		}
+		*/
 	}
 }

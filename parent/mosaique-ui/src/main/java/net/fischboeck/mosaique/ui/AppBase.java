@@ -1,8 +1,5 @@
 package net.fischboeck.mosaique.ui;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,22 +11,7 @@ public class AppBase {
 
 	@Autowired MainView		_view;
 	private Scene			_scene;
-	
-	public static List<String> fileTypes = new LinkedList<>();
-	public static List<String> extensions= new LinkedList<>();
-	
-	static {
-		fileTypes.add("jpg");
-		fileTypes.add("jpeg");
-		fileTypes.add("png");
-		fileTypes.add("tiff");
-		
-		extensions.add("*.jpg");
-		extensions.add("*.jpeg");
-		extensions.add("*.png");
-		extensions.add("*.tiff");
-	}
-	
+
 	public void setScene(Scene scene) {
 		this._scene = scene;
 	}

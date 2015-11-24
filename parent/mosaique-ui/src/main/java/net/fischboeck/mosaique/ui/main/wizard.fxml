@@ -9,7 +9,7 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.fischboeck.mosaique.ui.main.WizardPresenter">
 <children><AnchorPane minWidth="200.0" prefWidth="200.0">
-<children><ListView layoutY="22.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+<children><ListView fx:id="collectionView" layoutY="22.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 </children></AnchorPane><AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="768.0" prefWidth="531.0">
 <children><VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 <children><Label text="Master Image">
@@ -73,7 +73,7 @@
 <padding>
 <Insets left="4.0" />
 </padding></Label>
-</children></HBox><ChoiceBox fx:id="modeSelect" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+</children></HBox><ChoiceBox fx:id="modeSelect" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 </children>
 <padding>
 <Insets top="12.0" />

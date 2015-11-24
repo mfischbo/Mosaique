@@ -2,10 +2,10 @@ package net.fischboeck.mosaique.db;
 
 import net.fischboeck.mosaique.analyzer.Result;
 
-public class ImageDBEntry {
+class ImageDBEntry {
 	
-	public Result _result;
-	public boolean _isUsed;
+	Result _result;
+	boolean _isUsed;
 
 	public ImageDBEntry() {
 	}

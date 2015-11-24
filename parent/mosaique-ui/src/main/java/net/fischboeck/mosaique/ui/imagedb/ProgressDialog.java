@@ -10,11 +10,12 @@ public class ProgressDialog extends Alert {
 
 	
 	public ProgressDialog(String title) {
-		super(AlertType.INFORMATION);
+		super(AlertType.NONE);
 		this.setTitle(title);
-		this.setHeaderText("Your image collection is being created. This might take a while");
+		this.setHeaderText("Your image collection is being created. This might take a while...");
 	
-		this.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+		this.getDialogPane().lookupButton(ButtonType.OK).setVisible(false);
+		
 		this._pBar = new ProgressBar();
 		this.getDialogPane().setContent(_pBar);
 	}

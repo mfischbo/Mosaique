@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -23,6 +24,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import net.fischboeck.mosaique.db.FileCollector;
 import net.fischboeck.mosaique.ui.AppBase;
 import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
 
@@ -45,6 +47,7 @@ public class WizardPresenter implements Initializable {
 	@FXML	private ImageView				imageView;
 	@FXML	private TextField				txOutputWidth;
 	@FXML	private TextField				txOutputHeight;
+	@FXML	private ListView<String>		collectionView;
 	
 	private FileChooser						_fCh = new FileChooser();
 
@@ -70,7 +73,7 @@ public class WizardPresenter implements Initializable {
 	}
 	
 	public void onCreateButtonClicked() {
-		
+	
 	}
 	
 	@Override
@@ -82,7 +85,7 @@ public class WizardPresenter implements Initializable {
 		modeSelect.setItems(FXCollections.observableArrayList("Color", "Greyscale"));
 		modeSelect.setValue("Color");
 		
-		_fCh.getExtensionFilters().add(new ExtensionFilter("Images", AppBase.extensions));
+		_fCh.getExtensionFilters().add(new ExtensionFilter("Images", FileCollector.extensions));
 		
 		// dnd on imageview
 		imageView.setOnDragOver(new EventHandler<DragEvent>() {

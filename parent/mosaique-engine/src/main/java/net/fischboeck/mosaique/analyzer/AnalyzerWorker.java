@@ -42,4 +42,8 @@ public class AnalyzerWorker implements Runnable {
 	public List<Result> getResults() {
 		return this._results;
 	}
+	
+	public int getResultCount() {
+		return this._results.size();
+	}
 }

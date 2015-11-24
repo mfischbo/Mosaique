@@ -27,6 +27,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import net.fischboeck.mosaique.analyzer.Result;
+import net.fischboeck.mosaique.db.FileCollector;
 import net.fischboeck.mosaique.ui.AppBase;
 import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
 
@@ -73,33 +75,17 @@ public class ImagedbPresenter implements Initializable {
 	}
 	
 	public void onSaveClicked() {
+
+		FileCollector fc = new FileCollector(_files);
+		List<File> files = fc.getResult();
 		
 		ProgressDialog pd = new ProgressDialog("Importing stuff...");
-		
-		Task<Integer> task = new Task<Integer>() {
-		
-			@Override
-			protected Integer call() throws Exception {
-				for (int i=0; i < 100; i++) {
-					updateProgress(i, 100);
-					try {
-						Thread.sleep(100L);
-					} catch (Exception ex) {
-						if (isCancelled()) {
-							break;
-						}
-					}
-				}
-				return 0;
-			}
-		};
-		
+		Task<List<Result>> task = new ResultSetBuilderTask(files);
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
 			@Override
 			public void handle(WorkerStateEvent event) {
 				pd.close();
-				System.out.println("Finished work");
+				System.out.println(task.getValue().size());
 				onCancelClicked();
 			}
 		});
@@ -107,7 +93,6 @@ public class ImagedbPresenter implements Initializable {
 		pd.show();
 		pd.getProgressBar().progressProperty().bind(task.progressProperty());
 		Thread th = new Thread(task);
-		//th.setDaemon(true);
 		th.start();
 	}
 
@@ -116,14 +101,16 @@ public class ImagedbPresenter implements Initializable {
 		Image i = new Image("folder.png", 50, 50, true, true);
 		IconPane p = new IconPane(i, f.getName());
 		flowPane.getChildren().add(p);
+		_files.add(f);
 	}
 	
 	private void addFile(File f) {
 		String[] t = f.getName().split("\\.");
-		if (AppBase.fileTypes.contains(t[t.length -1])) {
+		if (FileCollector.fileTypes.contains(t[t.length -1])) {
 			Image i = new Image("file:" + f.getAbsolutePath(), 50, 50, true, true);
 			IconPane p = new IconPane(i, f.getName());
 			flowPane.getChildren().add(p);
+			_files.add(f);
 		}
 	}
 
