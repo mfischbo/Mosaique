@@ -5,6 +5,7 @@ import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -40,6 +41,10 @@ public class MosaiqueBuilder {
 	
 	private BufferedImageOp		_biOp;
 	private Random				_random;
+
+	private String[][]			_imageMap;
+	
+	private List<ProgressCallback>	_cbs;
 	
 	private Map<String, BufferedImage> _cache = new HashMap<>();
 	
@@ -70,12 +75,16 @@ public class MosaiqueBuilder {
 		}
 	}
 	
+	public void registerProgressCallback(ProgressCallback cb) {
+		_cbs.add(cb);
+	}
 	
-	public void create() throws Exception {
-	
+	public String[][] createImageMap() {
+		
 		int tc = _master.getTileCount();
 		this._tileWidth = _width / tc;
 		this._tileHeight = _height / tc;
+		this._imageMap  = new String[tc][tc];
 		
 		// apply prefilter
 		if (_formatFilter) {
@@ -102,6 +111,54 @@ public class MosaiqueBuilder {
 				} else
 					r = _db.getBestMatchingByBrightness(_master.getAvgBrightness(tx, ty), _reuse, _stray);
 		
+				if (_stray == 0) {
+					System.out.println("Painting tile " + tx + " / " + ty + " with image from : " + r[0].path);
+					_imageMap[tx][ty] = r[0].path;
+					_db.consume(r[0]);
+				} else {
+					int idx = _random.nextInt(_stray-1);
+					System.out.println("Painting tile " + tx + " / " + ty + " with image from : " + r[idx].path);
+					_imageMap[tx][ty] = r[idx].path;
+					_db.consume(r[idx]);
+				}
+			}
+		}
+		return this._imageMap;
+	}
+	
+	public Map<String, BufferedImage> create() throws Exception {
+	
+		int tc = _master.getTileCount();
+		/*
+		this._tileWidth = _width / tc;
+		this._tileHeight = _height / tc;
+		
+		// apply prefilter
+		if (_formatFilter) {
+			Format f = Format.LANDSCAPE;
+			if (_master.getResult().height > _master.getResult().width)
+				f = Format.PORTRAIT;
+			
+			_db.applyPrefilter(f);
+		}
+		*/
+		// tile iteration
+		for (int tx = 0; tx < tc; tx++) {
+			for (int ty = 0; ty < tc; ty++) {
+		
+				/*
+				// avg color for that tile
+				int avgc = _master.getAvgColor(tx, ty);
+			
+				Result[] r = null;
+				if (_mode == Mode.COLOR) {
+					if (_subSampling)
+						r = _db.getBestMatchingByColor(findKernel(tx,ty), _reuse, _stray);
+					else
+						r = _db.getBestMatchingByColor(avgc, _reuse, _stray);
+				} else
+					r = _db.getBestMatchingByBrightness(_master.getAvgBrightness(tx, ty), _reuse, _stray);
+		
 				if (r == null) return;
 				
 				
@@ -113,10 +170,11 @@ public class MosaiqueBuilder {
 					System.out.println("Painting tile " + tx + " / " + ty + " with image from : " + r[idx].path);
 					paintTile(tx, ty, r[idx]);
 				}
+				*/
+				paintTile(tx, ty, _imageMap[tx][ty]);
 			}
 		}
-		
-		System.out.println("Used " + _cache.keySet().size() + " different images for this artwork");
+		return _cache;
 	}
 	
 	private int[] findKernel(int tx, int ty) {
@@ -142,27 +200,21 @@ public class MosaiqueBuilder {
 		ImageIO.write(_im, "jpg", new FileOutputStream(output));
 	}
 	
-	private void paintTile(int tx, int ty, Result r) throws Exception {
+	private void paintTile(int tx, int ty, String path) throws Exception {
 		
-		// read r and shrink to size
-		_db.consume(r);
-		
+	
 		// check for a cache hit
 		BufferedImage th = null;
-		if (_reuse) {
-			if (_cache.containsKey(r.path))
-				th = _cache.get(r.path);
-		}
+		if (_cache.containsKey(path))
+			th = _cache.get(path);
 		
 		if (th == null) {
-			th = Scalr.resize(ImageIO.read(new File(r.path)), Scalr.Method.SPEED, 
+			th = Scalr.resize(ImageIO.read(new File(path)), Scalr.Method.SPEED, 
 					Scalr.Mode.FIT_EXACT, _tileWidth, _tileHeight, _biOp);
-			
-			
 		}
 		
-		if (_reuse && !_cache.containsKey(r.path))
-			_cache.put(r.path, th);
+		if (_reuse && !_cache.containsKey(path))
+			_cache.put(path, th);
 		
 		int offX = tx * this._tileWidth;
 		int offY = ty * this._tileHeight;
@@ -173,6 +225,9 @@ public class MosaiqueBuilder {
 						y + offY,
 						th.getRGB(x, y));
 			}
+		}
+		for (ProgressCallback c : _cbs) {
+			c.onMosaiqueCalculated(path, th);
 		}
 	}
 }

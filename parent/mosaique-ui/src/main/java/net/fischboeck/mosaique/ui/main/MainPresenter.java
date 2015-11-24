@@ -11,6 +11,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import net.fischboeck.mosaique.MasterImage;
+import net.fischboeck.mosaique.MosaiqueBuilder;
+import net.fischboeck.mosaique.db.ImageDB;
 import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
 import net.fischboeck.mosaique.ui.imagedb.ImagedbView;
 
@@ -30,8 +33,33 @@ public class MainPresenter implements Initializable {
 	}
 	
 	@EventListener
-	public void handleViewDisposedEvent(ViewDisposedEvent event) {
-			this.masterPane.getChildren().clear();
+	public void handleViewDisposedEvent(ViewDisposedEvent<String> event) {
+		this.masterPane.getChildren().clear();
+	}
+	
+	@EventListener
+	public void handleOtherViewDisposedEvent(ViewDisposedEvent<BuilderConfiguration> event) {
+		this.masterPane.getChildren().clear();
+		BuilderConfiguration c = event.getObject();
+	
+		ImageDB db = new ImageDB();
+		c.collections.forEach(col -> {
+			col.getImages().forEach(i -> {
+				db.addImage(i);
+			});
+		});
+	
+		try {
+			MasterImage im = new MasterImage(c.masterImage, c.tileCount);
+			MosaiqueBuilder builder = new MosaiqueBuilder(db, im, 
+					c.allowImageReuse, c.useFormatFilter, c.mode, c.strayFactor, c.useSubsampling,
+					c.resultWidth, c.resultHeight);
+			
+			String[][] map = builder.createImageMap();
+			System.out.println("Looks good");
+		} catch (Exception ex) {
+			
+		}
 	}
 
 	@Override

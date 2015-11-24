@@ -10,7 +10,7 @@ public class ProgressDialog extends Alert {
 
 	
 	public ProgressDialog(String title) {
-		super(AlertType.NONE);
+		super(AlertType.INFORMATION);
 		this.setTitle(title);
 		this.setHeaderText("Your image collection is being created. This might take a while...");
 	

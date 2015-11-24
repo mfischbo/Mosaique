@@ -1,5 +1,7 @@
 package net.fischboeck.mosaique.ui;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -34,6 +36,12 @@ public class Mosaique extends javafx.application.Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		
+		// check if .cache/.mosaique exists
+		File f = new File(System.getProperty("user.home") + "/.cache/mosaique");
+		if (!f.exists()) {
+			f.mkdirs();
+		}
 			
 		Scene s = new Scene(new StackPane());
 		_base.setScene(s);

@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 
 import net.fischboeck.mosaique.analyzer.ImageAnalyzer;
 import net.fischboeck.mosaique.analyzer.Result;
-import net.fischboeck.mosaique.db.ImageDB;
 
 public class MasterImage {
 
@@ -18,7 +17,7 @@ public class MasterImage {
 	private int		_tileWidth;
 	private int		_tileHeight;
 	
-	public MasterImage(File f, ImageDB db, int tiles) throws Exception {
+	public MasterImage(File f,int tiles) throws Exception {
 		
 		ImageAnalyzer a = new ImageAnalyzer();
 		this._result = a.analyze(f);

@@ -29,6 +29,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import net.fischboeck.mosaique.analyzer.Result;
 import net.fischboeck.mosaique.db.FileCollector;
+import net.fischboeck.mosaique.db.ImageCollection;
+import net.fischboeck.mosaique.db.ImageDBReader;
 import net.fischboeck.mosaique.ui.AppBase;
 import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
 
@@ -41,6 +43,7 @@ public class ImagedbPresenter implements Initializable {
 	@Autowired
 	private ApplicationEventPublisher	_publisher;
 	
+
 	@FXML private TextField			nameField;
 	@FXML private ScrollPane 		contentPane;
 	@FXML private FlowPane   		flowPane;
@@ -71,7 +74,7 @@ public class ImagedbPresenter implements Initializable {
 		this._directories.clear();
 		this._files.clear();
 		this.nameField.setText("");
-		_publisher.publishEvent(new ViewDisposedEvent());
+		_publisher.publishEvent(new ViewDisposedEvent<String>(null));
 	}
 	
 	public void onSaveClicked() {
@@ -84,9 +87,19 @@ public class ImagedbPresenter implements Initializable {
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
+				
+				ImageCollection c = new ImageCollection();
+				c.setName(nameField.getText());
+				c.setImages(task.getValue());
+			
+				try {
+					File dst = new File(System.getProperty("user.home") + "/.cache/mosaique/" + c.getId() + ".json");
+					ImageDBReader.serialize(c, dst);
+					onCancelClicked();
+				} catch (Exception ex) {
+					
+				}
 				pd.close();
-				System.out.println(task.getValue().size());
-				onCancelClicked();
 			}
 		});
 		
@@ -161,5 +174,7 @@ public class ImagedbPresenter implements Initializable {
 				flowPane.setPrefWrapLength(newValue.getWidth());
 			}
 		});
+		
+	
 	}
 }

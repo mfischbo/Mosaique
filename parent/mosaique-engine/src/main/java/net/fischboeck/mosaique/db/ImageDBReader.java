@@ -25,4 +25,15 @@ public class ImageDBReader {
 		ImageDB retval = new ImageDB(e);
 		return retval;
 	}
+	
+	public static void serialize(ImageCollection collection, File f) throws Exception {
+		ObjectMapper om = new ObjectMapper();
+		om.writeValue(f, collection);
+	}
+	
+	public static ImageCollection readCollection(File f) throws Exception {
+		ObjectMapper om = new ObjectMapper();
+		ImageCollection c = om.readValue(f, ImageCollection.class);
+		return c;
+	}
 }

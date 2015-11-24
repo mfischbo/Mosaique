@@ -55,7 +55,7 @@
 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
-<children><Label text="Amount of Tiles per Axis" /><Label text="Mode" GridPane.rowIndex="1" /><Label text="Stray Factor" GridPane.rowIndex="5" /><CheckBox mnemonicParsing="false" text="Use Images multiple times" GridPane.columnIndex="1" GridPane.rowIndex="2" /><CheckBox mnemonicParsing="false" text="Use format filter" GridPane.columnIndex="1" GridPane.rowIndex="3" /><CheckBox mnemonicParsing="false" text="Use Blur Filter" GridPane.columnIndex="1" GridPane.rowIndex="4" /><Label text="Output Size" GridPane.rowIndex="6" /><HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+<children><Label text="Amount of Tiles per Axis" /><Label text="Mode" GridPane.rowIndex="1" /><Label text="Stray Factor" GridPane.rowIndex="5" /><CheckBox fx:id="allowReuse" mnemonicParsing="false" selected="true" text="Use Images multiple times" GridPane.columnIndex="1" GridPane.rowIndex="2" /><CheckBox fx:id="useFormatFilter" mnemonicParsing="false" selected="true" text="Use format filter" GridPane.columnIndex="1" GridPane.rowIndex="3" /><CheckBox fx:id="useSubsampling" mnemonicParsing="false" text="Use Blur Filter" GridPane.columnIndex="1" GridPane.rowIndex="4" /><Label text="Output Size" GridPane.rowIndex="6" /><HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
 <children><TextField fx:id="txOutputWidth" prefWidth="80.0" /><Label text="x">
 <HBox.margin>
 <Insets left="8.0" right="8.0" />
@@ -69,7 +69,7 @@
 <Insets left="4.0" />
 </HBox.margin></Label>
 </children></HBox><HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-<children><Slider fx:id="straySlider" blockIncrement="1.0" max="32.0" minorTickCount="1" snapToTicks="true" value="2.0" /><Label fx:id="lblStray" text="0" /><Label text="Images">
+<children><Slider fx:id="straySlider" blockIncrement="1.0" majorTickUnit="1.0" max="32.0" minorTickCount="0" snapToTicks="true" value="2.0" /><Label fx:id="lblStray" text="0" /><Label text="Images">
 <padding>
 <Insets left="4.0" />
 </padding></Label>
