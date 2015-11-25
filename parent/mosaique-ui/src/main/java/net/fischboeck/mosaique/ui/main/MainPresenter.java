@@ -47,6 +47,7 @@ public class MainPresenter implements Initializable {
 	private String[][]				imageMap;
 	private Canvas 					canvas;
 	private int						callCount = 0;
+	private long					memUsed;
 	
 	public void onFileNewClicked() {
 		System.out.println("u clicked something");
@@ -60,6 +61,7 @@ public class MainPresenter implements Initializable {
 	@EventListener
 	public void handleOtherViewDisposedEvent(WizardFinishedEvent event) {
 		this.masterPane.getChildren().clear();
+		this.memUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		BuilderConfiguration c = event.getConfiguration();
 	
 		ImageDB db = new ImageDB();
@@ -120,6 +122,9 @@ public class MainPresenter implements Initializable {
 		try {
 			Image i = SwingFXUtils.toFXImage(event.getImage(), null);
 			this.canvas.getGraphicsContext2D().drawImage(i, 0, 0);
+			
+			long usedNow = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			log.info("Generation took {} mb of RAM", (usedNow - memUsed) / 1024 / 1024);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
