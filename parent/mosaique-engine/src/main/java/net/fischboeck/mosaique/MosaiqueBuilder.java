@@ -5,6 +5,7 @@ import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -44,7 +45,7 @@ public class MosaiqueBuilder {
 
 	private String[][]			_imageMap;
 	
-	private List<ProgressCallback>	_cbs;
+	private List<ProgressCallback>	_cbs = new LinkedList<>();
 	
 	private Map<String, BufferedImage> _cache = new HashMap<>();
 	
@@ -200,14 +201,21 @@ public class MosaiqueBuilder {
 		ImageIO.write(_im, "jpg", new FileOutputStream(output));
 	}
 	
+	public BufferedImage getFinalResult() {
+		return this._im;
+	}
+	
 	private void paintTile(int tx, int ty, String path) throws Exception {
 		
 	
 		// check for a cache hit
-		BufferedImage th = null;
-		if (_cache.containsKey(path))
-			th = _cache.get(path);
+		boolean fromCache = false;
 		
+		BufferedImage th = null;
+		if (_cache.containsKey(path)) {
+			th = _cache.get(path);
+			fromCache = true;
+		}
 		if (th == null) {
 			th = Scalr.resize(ImageIO.read(new File(path)), Scalr.Method.SPEED, 
 					Scalr.Mode.FIT_EXACT, _tileWidth, _tileHeight, _biOp);
@@ -226,8 +234,11 @@ public class MosaiqueBuilder {
 						th.getRGB(x, y));
 			}
 		}
-		for (ProgressCallback c : _cbs) {
-			c.onMosaiqueCalculated(path, th);
+		
+		if (!fromCache) {
+			for (ProgressCallback c : _cbs) {
+				c.onTileCalculated(path, th);
+			}
 		}
 	}
 }

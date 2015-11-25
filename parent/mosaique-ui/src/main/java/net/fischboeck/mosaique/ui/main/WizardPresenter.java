@@ -39,6 +39,7 @@ import net.fischboeck.mosaique.db.ImageCollection;
 import net.fischboeck.mosaique.ui.AppBase;
 import net.fischboeck.mosaique.ui.ImageCollectionService;
 import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
+import net.fischboeck.mosaique.ui.event.WizardFinishedEvent;
 
 @Component
 public class WizardPresenter implements Initializable {
@@ -113,7 +114,7 @@ public class WizardPresenter implements Initializable {
 		List<ImageCollection> x = _service.getAllCollections();
 		b.collections = x.stream().filter(p -> _imageCollections.contains(p.getName())).collect(Collectors.toList());
 		
-		_publisher.publishEvent(new ViewDisposedEvent<BuilderConfiguration>(b));
+		_publisher.publishEvent(new WizardFinishedEvent(b));
 	}
 
 

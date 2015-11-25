@@ -4,5 +4,7 @@ import java.awt.image.BufferedImage;
 
 public interface ProgressCallback {
 	
-	public void onMosaiqueCalculated(String path, BufferedImage img);
+	public void onTileCalculated(String path, BufferedImage img);
+	
+	public void onImageComplete();
 }
