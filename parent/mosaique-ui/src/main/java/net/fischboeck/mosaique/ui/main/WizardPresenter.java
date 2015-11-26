@@ -94,7 +94,7 @@ public class WizardPresenter implements Initializable {
 	}
 	
 	public void onCancelButtonClicked() {
-		_publisher.publishEvent(new ViewDisposedEvent<String>(null));
+		_publisher.publishEvent(new ViewDisposedEvent());
 	}
 	
 	public void onCreateButtonClicked() {
@@ -129,6 +129,7 @@ public class WizardPresenter implements Initializable {
 		modeSelect.setItems(FXCollections.observableArrayList("Color", "Greyscale"));
 		modeSelect.setValue("Color");
 		
+		_fCh.setInitialDirectory(new File(System.getProperty("user.home")));
 		_fCh.getExtensionFilters().add(new ExtensionFilter("Images", FileCollector.extensions));
 		
 		// dnd on imageview

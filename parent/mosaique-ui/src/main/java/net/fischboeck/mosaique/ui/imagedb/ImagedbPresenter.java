@@ -74,7 +74,7 @@ public class ImagedbPresenter implements Initializable {
 		this._directories.clear();
 		this._files.clear();
 		this.nameField.setText("");
-		_publisher.publishEvent(new ViewDisposedEvent<String>(null));
+		_publisher.publishEvent(new ViewDisposedEvent());
 	}
 	
 	public void onSaveClicked() {

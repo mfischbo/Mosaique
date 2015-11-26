@@ -130,49 +130,11 @@ public class MosaiqueBuilder {
 	public Map<String, BufferedImage> create() throws Exception {
 	
 		int tc = _master.getTileCount();
-		/*
-		this._tileWidth = _width / tc;
-		this._tileHeight = _height / tc;
-		
-		// apply prefilter
-		if (_formatFilter) {
-			Format f = Format.LANDSCAPE;
-			if (_master.getResult().height > _master.getResult().width)
-				f = Format.PORTRAIT;
-			
-			_db.applyPrefilter(f);
-		}
-		*/
+
 		// tile iteration
 		for (int tx = 0; tx < tc; tx++) {
 			for (int ty = 0; ty < tc; ty++) {
-		
-				/*
-				// avg color for that tile
-				int avgc = _master.getAvgColor(tx, ty);
-			
-				Result[] r = null;
-				if (_mode == Mode.COLOR) {
-					if (_subSampling)
-						r = _db.getBestMatchingByColor(findKernel(tx,ty), _reuse, _stray);
-					else
-						r = _db.getBestMatchingByColor(avgc, _reuse, _stray);
-				} else
-					r = _db.getBestMatchingByBrightness(_master.getAvgBrightness(tx, ty), _reuse, _stray);
-		
-				if (r == null) return;
-				
-				
-				if (_stray == 0) {
-					System.out.println("Painting tile " + tx + " / " + ty + " with image from : " + r[0].path);
-					paintTile(tx, ty, r[0]);
-				} else {
-					int idx = _random.nextInt(_stray-1);
-					System.out.println("Painting tile " + tx + " / " + ty + " with image from : " + r[idx].path);
-					paintTile(tx, ty, r[idx]);
-				}
-				*/
-				paintTile(tx, ty, _imageMap[tx][ty]);
+					paintTile(tx, ty, _imageMap[tx][ty]);
 			}
 		}
 		return _cache;

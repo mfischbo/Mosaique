@@ -64,7 +64,7 @@ public class MainPresenter implements Initializable {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	@EventListener
-	public void handleViewDisposedEvent(ViewDisposedEvent<String> event) {
+	public void handleViewDisposedEvent(ViewDisposedEvent event) {
 		this.masterPane.getChildren().clear();
 	}
 	
