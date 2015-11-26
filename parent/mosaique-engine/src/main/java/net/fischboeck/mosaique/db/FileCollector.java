@@ -20,6 +20,10 @@ public class FileCollector {
 		extensions.add("*.jpeg");
 		extensions.add("*.png");
 		extensions.add("*.tiff");
+		extensions.add("*.JPG");
+		extensions.add("*.JPEG");
+		extensions.add("*.PNG");
+		extensions.add("*.TIFF");
 	}
 	
 	List<File>		result = new LinkedList<>();

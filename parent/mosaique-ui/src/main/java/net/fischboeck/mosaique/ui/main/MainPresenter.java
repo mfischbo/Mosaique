@@ -173,6 +173,7 @@ public class MainPresenter implements Initializable {
 	
 	public void onExportAsClicked() {
 		FileChooser fch = new FileChooser();
+		fch.setInitialDirectory(new File(System.getProperty("user.home")));
 		File f = fch.showSaveDialog(_base.getScene().getWindow());
 		if (f != null) {
 			try {

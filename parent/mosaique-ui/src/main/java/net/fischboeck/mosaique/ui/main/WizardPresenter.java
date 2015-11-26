@@ -139,8 +139,8 @@ public class WizardPresenter implements Initializable {
 			}
 		});
 		
-		lblTiles.textProperty().bind(tileSlider.valueProperty().asString());
-		lblStray.textProperty().bind(straySlider.valueProperty().asString());
+		lblTiles.textProperty().bind(tileSlider.valueProperty().asString("%.0f"));
+		lblStray.textProperty().bind(straySlider.valueProperty().asString("%.0f"));
 	
 		modeSelect.setItems(FXCollections.observableArrayList("Color", "Greyscale"));
 		modeSelect.setValue("Color");
