@@ -43,7 +43,6 @@ public class ImagedbPresenter implements Initializable {
 	@Autowired
 	private ApplicationEventPublisher	_publisher;
 	
-
 	@FXML private TextField			nameField;
 	@FXML private ScrollPane 		contentPane;
 	@FXML private FlowPane   		flowPane;
@@ -64,8 +63,10 @@ public class ImagedbPresenter implements Initializable {
 	
 	public void onAddFileClicked() {
 		List<File> files = _fCh.showOpenMultipleDialog(_base.getScene().getWindow());
-		for (File f : files)
-			addFile(f);
+		if (files != null) { 
+			for (File f : files)
+				addFile(f);
+		}
 	}
 	
 	public void onCancelClicked() {
@@ -82,7 +83,7 @@ public class ImagedbPresenter implements Initializable {
 		FileCollector fc = new FileCollector(_files);
 		List<File> files = fc.getResult();
 		
-		ProgressDialog pd = new ProgressDialog("Importing stuff...");
+		ProgressDialog pd = new ProgressDialog("Importing images...");
 		Task<List<Result>> task = new ResultSetBuilderTask(files);
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -129,7 +130,11 @@ public class ImagedbPresenter implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	
+
+		File f = new File(System.getProperty("user.home"));
+		_fCh.setInitialDirectory(f);
+		_dCh.setInitialDirectory(f);
+		
 		flowPane.setPrefWidth(contentPane.getWidth());
 		flowPane.setPrefHeight(contentPane.getHeight());
 		flowPane.setPrefWrapLength(contentPane.getWidth());
@@ -174,7 +179,5 @@ public class ImagedbPresenter implements Initializable {
 				flowPane.setPrefWrapLength(newValue.getWidth());
 			}
 		});
-		
-	
 	}
 }

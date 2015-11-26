@@ -19,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -119,10 +120,25 @@ public class WizardPresenter implements Initializable {
 		_publisher.publishEvent(new WizardFinishedEvent(b));
 	}
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	
+
+		// update the image collection when the view becomes active
+		container.parentProperty().addListener(new ChangeListener<Parent>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
+				if (newValue != null) {
+					List<ImageCollection> col = _service.getAllCollections();
+					ObservableList<String> items = FXCollections.observableArrayList();
+					col.forEach(c -> {
+						items.add(c.getName());
+					});
+					collectionView.setItems(items);
+				}
+			}
+		});
+		
 		lblTiles.textProperty().bind(tileSlider.valueProperty().asString());
 		lblStray.textProperty().bind(straySlider.valueProperty().asString());
 	
