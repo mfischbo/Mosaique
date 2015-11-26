@@ -1,7 +1,11 @@
 package net.fischboeck.mosaique.ui.main;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,16 +14,20 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import net.fischboeck.mosaique.MasterImage;
 import net.fischboeck.mosaique.MosaiqueBuilder;
 import net.fischboeck.mosaique.db.ImageDB;
+import net.fischboeck.mosaique.ui.AppBase;
 import net.fischboeck.mosaique.ui.event.ImageFinishedEvent;
 import net.fischboeck.mosaique.ui.event.TileCalculatedEvent;
 import net.fischboeck.mosaique.ui.event.ViewDisposedEvent;
@@ -39,20 +47,22 @@ public class MainPresenter implements Initializable {
 	@Autowired
 	private ApplicationEventPublisher	publisher;
 	
-	private Logger log = LoggerFactory.getLogger(getClass());
+	@Autowired
+	private AppBase					_base;
+	
 
 	@FXML private AnchorPane		masterPane;
+	@FXML private MenuItem			exportItem;
 	
 	
 	private String[][]				imageMap;
+	private BufferedImage			finalResult;
 	private Canvas 					canvas;
 	private int						callCount = 0;
 	private long					memUsed;
-	
-	public void onFileNewClicked() {
-		System.out.println("u clicked something");
-	}
-	
+
+	private Logger log = LoggerFactory.getLogger(getClass());
+
 	@EventListener
 	public void handleViewDisposedEvent(ViewDisposedEvent<String> event) {
 		this.masterPane.getChildren().clear();
@@ -60,6 +70,9 @@ public class MainPresenter implements Initializable {
 	
 	@EventListener
 	public void handleOtherViewDisposedEvent(WizardFinishedEvent event) {
+		finalResult = null;
+		exportItem.setDisable(true);
+		
 		this.masterPane.getChildren().clear();
 		this.memUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		BuilderConfiguration c = event.getConfiguration();
@@ -89,8 +102,6 @@ public class MainPresenter implements Initializable {
 			Thread q = new Thread(dt);
 			q.setDaemon(true);
 			q.start();
-			
-			
 		} catch (Exception ex) {
 			log.error(ex.getMessage());
 			ex.printStackTrace();
@@ -119,6 +130,9 @@ public class MainPresenter implements Initializable {
 	@EventListener
 	public void handleImageFinishedResult(ImageFinishedEvent event) {
 		log.info("Received image finished event. TileCreat has been called {} times", callCount);
+		finalResult = event.getImage();
+		exportItem.setDisable(false);
+	
 		try {
 			Image i = SwingFXUtils.toFXImage(event.getImage(), null);
 			this.canvas.getGraphicsContext2D().drawImage(i, 0, 0);
@@ -132,12 +146,15 @@ public class MainPresenter implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
-		
+		exportItem.setDisable(true);
 	}
 	
 	public void onMosaiqueNewClicked() {
 		Node n = wizView.getView();
+		AnchorPane.setTopAnchor(n, 0.0);
+		AnchorPane.setLeftAnchor(n, 0.0);
+		AnchorPane.setRightAnchor(n, 0.0);
+		AnchorPane.setBottomAnchor(n, 0.0);
 		this.masterPane.getChildren().clear();
 		this.masterPane.getChildren().add(n);
 	}
@@ -152,5 +169,23 @@ public class MainPresenter implements Initializable {
 		
 		this.masterPane.getChildren().clear();
 		this.masterPane.getChildren().add(imdbView.getView());
+	}
+	
+	public void onExportAsClicked() {
+		FileChooser fch = new FileChooser();
+		File f = fch.showSaveDialog(_base.getScene().getWindow());
+		if (f != null) {
+			try {
+				ImageIO.write(finalResult, "PNG", f);
+				
+			} catch (Exception ex) {
+				log.error("Failed writing final image to file {}", f.getAbsolutePath());
+			}
+		}
+	}
+	
+	public void onCloseClicked() {
+		Platform.exit();
+		System.exit(0);
 	}
 }

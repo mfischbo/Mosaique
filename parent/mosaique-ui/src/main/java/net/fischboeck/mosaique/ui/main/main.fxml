@@ -8,17 +8,8 @@
 <children><MenuBar>
   <menus>
     <Menu mnemonicParsing="false" text="File">
-      <items><MenuItem mnemonicParsing="false" onAction="#onMosaiqueNewClicked" text="New Mosaique ..." /><MenuItem mnemonicParsing="false" onAction="#onImageDBNewClicked" text="New ImageDB..." /><MenuItem mnemonicParsing="false" text="Export as..." /><MenuItem mnemonicParsing="false" text="Settings" />
-        <MenuItem mnemonicParsing="false" text="Close" />
-      </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Images">
-      <items><MenuItem mnemonicParsing="false" text="Manage Libraries" />
-      </items>
-    </Menu>
-    <Menu mnemonicParsing="false" text="Help">
-      <items>
-        <MenuItem mnemonicParsing="false" text="About" />
+      <items><MenuItem mnemonicParsing="false" onAction="#onMosaiqueNewClicked" text="New Mosaique ..." /><MenuItem mnemonicParsing="false" onAction="#onImageDBNewClicked" text="New ImageDB..." /><MenuItem fx:id="exportItem" mnemonicParsing="false" onAction="#onExportAsClicked" text="Export as..." />
+        <MenuItem mnemonicParsing="false" onAction="#onCloseClicked" text="Close" />
       </items>
     </Menu>
   </menus>

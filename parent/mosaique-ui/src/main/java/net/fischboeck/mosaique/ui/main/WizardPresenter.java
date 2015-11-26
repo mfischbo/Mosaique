@@ -31,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import net.fischboeck.mosaique.MosaiqueBuilder.Mode;
@@ -58,7 +59,8 @@ public class WizardPresenter implements Initializable {
 	// model classes
 	private File							_masterImage;
 	private ObservableList<String>			_imageCollections;
-	
+
+	@FXML	private HBox					container;
 	@FXML	private Slider					tileSlider;
 	@FXML	private Slider					straySlider;
 	@FXML	private Label					lblTiles;
