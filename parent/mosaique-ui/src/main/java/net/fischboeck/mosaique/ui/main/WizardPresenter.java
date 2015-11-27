@@ -2,9 +2,7 @@ package net.fischboeck.mosaique.ui.main;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +21,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Slider;
@@ -35,6 +34,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import net.fischboeck.mosaique.MosaiqueBuilder.Mode;
 import net.fischboeck.mosaique.db.FileCollector;
 import net.fischboeck.mosaique.db.ImageCollection;
@@ -59,7 +60,9 @@ public class WizardPresenter implements Initializable {
 	
 	// model classes
 	private File							_masterImage;
-	private ObservableList<String>			_imageCollections;
+	private ObservableList<ImageCollection> _imageCollections;
+	
+	private double							_aspectRatio;
 
 	@FXML	private HBox					container;
 	@FXML	private Slider					tileSlider;
@@ -70,13 +73,14 @@ public class WizardPresenter implements Initializable {
 	@FXML	private ImageView				imageView;
 	@FXML	private TextField				txOutputWidth;
 	@FXML	private TextField				txOutputHeight;
-	@FXML	private ListView<String>		collectionView;
+	@FXML	private ListView<ImageCollection>		collectionView;
 	@FXML	private CheckBox				allowReuse;
 	@FXML	private CheckBox				useFormatFilter;
 	@FXML	private CheckBox				useSubsampling;
+	@FXML	private CheckBox				keepRatio;
 	
 	private FileChooser						_fCh = new FileChooser();
-
+	
 	public void onChooseFileButtonClicked() {
 		File f = _fCh.showOpenDialog(_base.getScene().getWindow());
 		setMasterFile(f);
@@ -86,6 +90,7 @@ public class WizardPresenter implements Initializable {
 		if (f != null && f.isFile()) {
 			Image i = new Image("file:" + f.getAbsolutePath());
 			imageView.setImage(i);
+			_aspectRatio = i.getWidth() / i.getHeight();
 			
 			txOutputWidth.setText("" + (int) i.getWidth());
 			txOutputHeight.setText("" + (int) i.getHeight());
@@ -114,9 +119,7 @@ public class WizardPresenter implements Initializable {
 		if (modeSelect.getValue().equals("Color"))
 			b.mode = Mode.COLOR;
 		
-		List<ImageCollection> x = _service.getAllCollections();
-		b.collections = x.stream().filter(p -> _imageCollections.contains(p.getName())).collect(Collectors.toList());
-		
+		b.collections = collectionView.getSelectionModel().getSelectedItems();
 		_publisher.publishEvent(new WizardFinishedEvent(b));
 	}
 
@@ -129,18 +132,52 @@ public class WizardPresenter implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
 				if (newValue != null) {
-					List<ImageCollection> col = _service.getAllCollections();
-					ObservableList<String> items = FXCollections.observableArrayList();
-					col.forEach(c -> {
-						items.add(c.getName());
-					});
-					collectionView.setItems(items);
+					collectionView.setItems(FXCollections.observableArrayList(_service.getAllCollections()));
 				}
 			}
 		});
 		
+		// placeholder image for dropdown area
+		this.imageView.setImage(new Image("placeholder.png"));
+		
+		// binding for changing the output sizes
+		txOutputWidth.textProperty().bindBidirectional(txOutputHeight.textProperty(), new StringConverter<String>() {
+
+			@Override
+			public String toString(String object) {
+				if (!keepRatio.isSelected()) return txOutputWidth.getText();
+				try {
+					int val = Integer.parseInt(object);
+					return Integer.toString((int) (val*_aspectRatio));
+				} catch (Exception ex) {
+					return "0";
+				}
+			}
+
+			@Override
+			public String fromString(String string) {
+				if (!keepRatio.isSelected()) return txOutputHeight.getText();
+				try {
+					int val = Integer.parseInt(string);
+					return Integer.toString((int) (val* (1 / _aspectRatio)));
+				} catch (Exception ex) {
+					return "0";
+				}
+			}
+		});
+				
 		lblTiles.textProperty().bind(tileSlider.valueProperty().asString("%.0f"));
 		lblStray.textProperty().bind(straySlider.valueProperty().asString("%.0f"));
+		
+		tileSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				int sum = _imageCollections.stream().mapToInt(ImageCollection::getImageCount).sum();
+				if (sum >= Math.pow(newValue.doubleValue(), 2))
+					allowReuse.setDisable(false);
+			}
+		});
 	
 		modeSelect.setItems(FXCollections.observableArrayList("Color", "Greyscale"));
 		modeSelect.setValue("Color");
@@ -178,21 +215,40 @@ public class WizardPresenter implements Initializable {
 				event.consume();
 			}
 		});
-		
-		List<ImageCollection> col = _service.getAllCollections();
-		ObservableList<String> items = FXCollections.observableArrayList();
-		col.forEach(c -> {
-			items.add(c.getName());
-		});
-		collectionView.setItems(items);
-
-		collectionView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		collectionView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+	
+		collectionView.setCellFactory(new Callback<ListView<ImageCollection>, ListCell<ImageCollection>>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public ListCell<ImageCollection> call(ListView<ImageCollection> param) {
+			
+				ListCell<ImageCollection> c = new ListCell<ImageCollection>() {
+					
+					@Override
+					protected void updateItem(ImageCollection col, boolean empty) {
+						super.updateItem(col, empty);
+						if (col != null)
+							setText(col.getName() + " (" + col.getImageCount() + ")");
+						else
+							setText("");
+					}
+				};
+				return c;
+			}
+			
+		});
+		collectionView.setItems(FXCollections.observableArrayList(_service.getAllCollections()));
+		collectionView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		collectionView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ImageCollection>() {
+
+			@Override
+			public void changed(ObservableValue<? extends ImageCollection> observable, ImageCollection oldValue, ImageCollection newValue) {
 				_imageCollections = collectionView.getSelectionModel().getSelectedItems();
 				_log.info("Selection contains {} items", _imageCollections.size());
+				
+				int sum = _imageCollections.stream().mapToInt(ImageCollection::getImageCount).sum();
+				_log.info("Comparing {} to {}", sum, Math.pow(tileSlider.getValue(), 2));
+				if (sum > Math.pow(tileSlider.getValue(), 2)) 
+					allowReuse.setDisable(false);
 			}
 		});
 	}

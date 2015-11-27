@@ -1,5 +1,6 @@
 package net.fischboeck.mosaique.db;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -56,5 +57,10 @@ public class ImageCollection {
 
 	public void setImages(List<Result> images) {
 		this.images = images;
+	}
+	
+	@Transient
+	public int getImageCount() {
+		return images.size();
 	}
 }

@@ -70,10 +70,10 @@ public class MosaiqueBuilder {
 		
 		_im = new BufferedImage(_width, _height, BufferedImage.TYPE_INT_RGB);
 		
-		if (!allowReuse) {
-			if (_master.getTileCount() > Math.sqrt(db.count()))
-				throw new IllegalArgumentException("Allow reuse is false, but tile count exceeds image count");
-		}
+		/*	if (!allowReuse) {
+				if (db.count() < Math.pow(image.getTileCount(), 2))
+					throw new IllegalArgumentException("Allow reuse is false, but tile count exceeds image count");
+			}*/
 	}
 	
 	public void registerProgressCallback(ProgressCallback cb) {
@@ -117,7 +117,7 @@ public class MosaiqueBuilder {
 					_imageMap[tx][ty] = r[0].path;
 					_db.consume(r[0]);
 				} else {
-					int idx = _random.nextInt(_stray-1);
+					int idx = _random.nextInt(_stray);
 					System.out.println("Painting tile " + tx + " / " + ty + " with image from : " + r[idx].path);
 					_imageMap[tx][ty] = r[idx].path;
 					_db.consume(r[idx]);

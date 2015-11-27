@@ -29,6 +29,10 @@ public class ImageDB {
 		return this.entries.size();
 	}
 	
+	public void unconsumeAll() {
+		entries.forEach(e -> e._isUsed = false);
+	}
+	
 	public void consume(Result r) {
 		for (ImageDBEntry e : entries) {
 			if (e._result == r)
@@ -79,8 +83,8 @@ public class ImageDB {
 				retval[i] = entries.get(i)._result;
 			}
 			return retval;
-		}
-	
+		} 
+		
 		List<Result> results = new ArrayList<>(count);
 		for (ImageDBEntry e : entries) {
 			if (!e._isUsed)
