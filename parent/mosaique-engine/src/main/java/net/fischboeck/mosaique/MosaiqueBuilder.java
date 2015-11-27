@@ -179,7 +179,7 @@ public class MosaiqueBuilder {
 			fromCache = true;
 		}
 		if (th == null) {
-			th = Scalr.resize(ImageIO.read(new File(path)), Scalr.Method.SPEED, 
+			th = Scalr.resize(ImageIO.read(new File(path)), Scalr.Method.QUALITY, 
 					Scalr.Mode.FIT_EXACT, _tileWidth, _tileHeight, _biOp);
 		}
 		
